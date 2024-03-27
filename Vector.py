@@ -42,9 +42,7 @@ class Vector:
             values.append(self._vector[x] * self._vector[x])
             x += 1
 
-        
         # soma os valores
-        print(values)
         valorSomado = sum(values)
 
         estimativa_atual = 1.0

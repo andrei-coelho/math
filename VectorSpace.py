@@ -20,6 +20,10 @@ class VectorSpace:
             self._vectors.append(vec)
 
 
+    def addVector(self, vector:Vector):
+        self._vectors.append(vector)
+
+
     def sum(self) -> Vector:
         
         count = len(self._vectors)
