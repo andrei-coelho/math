@@ -105,7 +105,23 @@ class Matrix:
         return Matrix(res)
     
 
-    def getMatrixPermut(matrix_base,x=0,l=0):
+    def getLastIndexRowNotNull(matrix_base):
+
+        last_index = len(matrix_base)
+        status = False
+
+        while not status:
+            last_index -= 1
+            if last_index == 0: break
+            for m in matrix_base[last_index]:
+                if m != 0:
+                    status = True 
+                    break
+
+        return last_index
+    
+
+    def getPivotXY(matrix_base,x=0,l=0):
         cont = True
         z = 0
         while cont:
@@ -118,38 +134,37 @@ class Matrix:
                 z += 1
             if cont: x += 1
 
-        # faz a permutação
-        if z != l:
-            matrix_perm = []
-            matrix_perm.append(matrix_base[z])
-
-            i = -1
-            for m in matrix_base:
-                i += 1
-                if i == z: continue
-                matrix_perm.append(m)
-        else:
-            matrix_perm = matrix_base
-
-        return [x,matrix_perm]
+        return [x,z]
 
 
-    def reduce(self):
+    def reduce(self) -> MatrixType:
 
         matrix_final = self.getIdentity()
         matrix_base  = self._matrix
-            
-        # gauss
-        x = 0
+
+        x,line_pivot = Matrix.getPivotXY(matrix_base)
+
         line_pivot = 0
+
+        # faz a pemutação
+        matrix_perm = []
+        matrix_perm.append(matrix_base[line_pivot])
+
+        i = -1
+        for m in matrix_base:
+            i += 1
+            if i == line_pivot: continue
+            matrix_perm.append(m)
         
+        # gauss
         while x < self._total_columns:
 
-            x,matrix_perm = Matrix.getMatrixPermut(matrix_base,x,line_pivot)
-            print(matrix_perm)
-            linha = matrix_perm[line_pivot]
+            x,y = Matrix.getPivotXY(matrix_base,x,line_pivot)
+            
+            linha = matrix_perm[y]
             pivot = linha[x]
             num_mult = 1 / pivot if pivot != 0 else 0
+    
             xl = 0
             xf = 0 
             
@@ -164,16 +179,43 @@ class Matrix:
             # zera a coluna atual
             li = line_pivot + 1
             while li < self._total_rows:
+                
                 num_mult_iqual_0 = matrix_perm[li][x]
                 linha_pivot_arr = matrix_perm[line_pivot]
+
                 xo = 0
+                xz = 0
                 for v in linha_pivot_arr:
                     matrix_perm[li][xo] = matrix_perm[li][xo] - v * num_mult_iqual_0
                     xo += 1
+                for f in matrix_final[line_pivot]:
+                    matrix_final[li][xz] = matrix_final[li][xz] - f * num_mult_iqual_0
+                    xz += 1
                 li += 1
             x += 1
-            line_pivot += 1
+            line_pivot += 1            
 
-        # print(matrix_perm)
+        index_to_mult = Matrix.getLastIndexRowNotNull(matrix_perm)
+        lc = self._total_columns - 1
 
+        # jordan
+        while True:
 
+            if lc == 0 or index_to_mult == 0: break
+
+            for xo in range(len(matrix_perm)):
+                
+                if xo == index_to_mult: break
+                
+                mult = matrix_perm[xo][lc]
+                matrix_perm[xo][lc] = matrix_perm[xo][lc] - matrix_perm[index_to_mult][lc] * mult
+
+                ind = 0
+                for vmf in matrix_final[xo]:
+                    matrix_final[xo][ind] = vmf - matrix_final[index_to_mult][ind] * mult
+                    ind += 1
+
+            lc -= 1
+            index_to_mult -= 1
+        
+        return Matrix(matrix_final)

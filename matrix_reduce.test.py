@@ -7,4 +7,4 @@ matrix = Matrix([
     [1,1,2]
 ])
 
-print(matrix.reduce())
+print(matrix.reduce().getArray())
