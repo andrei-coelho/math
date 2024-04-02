@@ -123,15 +123,19 @@ class Matrix:
 
     def getPivotXY(matrix_base,x=0,l=0):
         cont = True
-        z = 0
+        z = l
+        max_rows = len(matrix_base)
         while cont:
+
             if x >= len(matrix_base[0]): break
-            z = l
-            while z < len(matrix_base):
+
+            while z < max_rows:
+
                 if matrix_base[z][x] != 0:
                     cont = False
                     break
-                z += 1
+                z = z + 1 if z + 1 < max_rows else 0
+
             if cont: x += 1
 
         return [x,z]
@@ -155,12 +159,12 @@ class Matrix:
             i += 1
             if i == line_pivot: continue
             matrix_perm.append(m)
-        
+               
         # gauss
-        while x < self._total_columns:
+        while line_pivot < self._total_rows:
 
-            x,y = Matrix.getPivotXY(matrix_base,x,line_pivot)
-            
+            x,y = Matrix.getPivotXY(matrix_perm,x,line_pivot)
+
             linha = matrix_perm[y]
             pivot = linha[x]
             num_mult = 1 / pivot if pivot != 0 else 0
@@ -175,7 +179,6 @@ class Matrix:
             for e in matrix_final[line_pivot]:
                 matrix_final[line_pivot][xf] = e * num_mult
                 xf += 1
-
             # zera a coluna atual
             li = line_pivot + 1
             while li < self._total_rows:
