@@ -141,7 +141,19 @@ class Matrix:
         return [x,z]
 
 
-    def reduce(self) -> MatrixType:
+    def determinant2x2(matrix):
+        return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]) 
+    
+    def determinant3x3(matrix):
+        diag1 = (matrix[0][0] * matrix[1][1] * matrix[2][2]) + (matrix[0][1] * matrix[1][2] * matrix[2][0]) + (matrix[0][2] * matrix[1][0] * matrix[2][1])
+        diag2 = (matrix[2][0] * matrix[1][1] * matrix[0][2]) + (matrix[2][1] * matrix[1][2] * matrix[0][0]) + (matrix[1][0] * matrix[0][1] * matrix[2][2])
+        return diag1 - diag2
+
+    def getDeterminant(self) -> float:
+        pass
+
+
+    def inverse(self) -> MatrixType:
 
         matrix_final = self.getIdentity()
         matrix_base  = self._matrix

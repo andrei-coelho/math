@@ -2,9 +2,9 @@ from Matrix import Matrix
 
 
 matrix = Matrix([
-    [1,2,2],
-    [4,5,5],
-    [2,0.5,-3]
+    [1,2,-1],
+    [-1,0,4],
+    [2,2,1]
 ])
 
 print(matrix.reduce().getArray())
