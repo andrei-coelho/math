@@ -2,6 +2,59 @@ from typing import Tuple,List,TypeVar
 
 MatrixType = TypeVar("MatrixType", bound="Matrix")
 
+
+def elevate(base:int|float, pot:int, num=1):
+    if pot == 0: return 0
+    if pot > 1:
+        num = base * num
+        return elevate(base, pot - 1, num)
+    else :
+        return base * num
+      
+
+def determinant_laplace(matrix:Tuple[Tuple[int|float],...]|List[List[int|float]]):
+    
+    size     = len(matrix)
+    ignorex  = 0
+    ignorey  = 0
+    list_cof = []
+
+    while ignorey < size:
+        
+        nmatrix:List[List[int|float]] = []
+        
+        for x in range(size):
+            if x == ignorex: continue 
+            y = 0
+            line = []
+            while y < size:
+                if y == ignorey: 
+                    y += 1
+                    continue 
+                line.append(matrix[x][y])
+                y += 1
+            nmatrix.append(line)
+        
+        nmatrixsize = len(nmatrix)
+        cofactor_axis = elevate(-1, ignorex + 1 + ignorey +1)
+        
+        if nmatrixsize == 2:
+            list_cof.append(cofactor_axis * Matrix.determinant2x2(nmatrix))
+        elif nmatrixsize == 3:
+            list_cof.append(cofactor_axis * Matrix.determinant3x3(nmatrix))
+        else:
+            list_cof.append(cofactor_axis * determinant_laplace(nmatrix))
+        ignorey += 1
+
+    determinant = 0
+    k = 0
+    for m in matrix[0]:
+        determinant += m * list_cof[k]
+        k += 1
+
+    return determinant
+    
+
 class Matrix:
 
 
@@ -10,6 +63,7 @@ class Matrix:
     _matrix:Tuple[Tuple[int|float],...]|List[List[int|float]]
 
     _identity:list = []
+    _determinant:int|bool = False
 
 
     def __init__(self, matrix:Tuple[Tuple[int|float],...]|List[List[int|float]]):
@@ -144,14 +198,23 @@ class Matrix:
     def determinant2x2(matrix):
         return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]) 
     
+    
     def determinant3x3(matrix):
         diag1 = (matrix[0][0] * matrix[1][1] * matrix[2][2]) + (matrix[0][1] * matrix[1][2] * matrix[2][0]) + (matrix[0][2] * matrix[1][0] * matrix[2][1])
         diag2 = (matrix[2][0] * matrix[1][1] * matrix[0][2]) + (matrix[2][1] * matrix[1][2] * matrix[0][0]) + (matrix[1][0] * matrix[0][1] * matrix[2][2])
         return diag1 - diag2
 
-    def getDeterminant(self) -> float:
-        pass
 
+    def getDeterminant(self) -> float:
+        
+        if self._total_columns != self._total_rows:
+            raise Exception("the matrix is not square")
+        
+        if not self._determinant:
+            self._determinant = determinant_laplace(self._matrix)
+
+        return self._determinant
+        
 
     def inverse(self) -> MatrixType:
 
