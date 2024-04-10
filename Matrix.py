@@ -64,6 +64,7 @@ class Matrix:
 
     _identity:list = []
     _determinant:int|bool = False
+    _inverse:MatrixType|bool = False
 
 
     def __init__(self, matrix:Tuple[Tuple[int|float],...]|List[List[int|float]]):
@@ -218,6 +219,9 @@ class Matrix:
 
     def inverse(self) -> MatrixType:
 
+        if self._inverse != False:
+            return self._inverse
+
         matrix_final = self.getIdentity()
         matrix_base  = self._matrix
 
@@ -295,5 +299,7 @@ class Matrix:
 
             lc -= 1
             index_to_mult -= 1
+
+        self._inverse = Matrix(matrix_final)
         
-        return Matrix(matrix_final)
+        return self._inverse
